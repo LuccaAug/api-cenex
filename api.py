@@ -48,6 +48,7 @@ def dadosAlunos(NUMAUT):
     celular = Query(cur, dado="CELULAR", tabela="ALUNO", quando="NUMAUT='"+str(NUMAUT)+"'")
     senha = Query(cur, dado="SENHAINT", tabela="ALUNO", quando="NUMAUT='"+str(NUMAUT)+"'")
     email = Query(cur, dado="EMAIL", tabela="ALUNO", quando="NUMAUT='"+str(NUMAUT)+"'")
+    id_AlunoTurma = Query(cur, dado="NUMTURMA", tabela="ALUNOTURMA", quando="NUMALUNO='"+str(NUMAUT)+"'")
 
     con.close()
     return jsonify( nome = nome,
@@ -60,7 +61,52 @@ def dadosAlunos(NUMAUT):
                     cep = cep,
                     celular = celular,
                     #senha = senha,
+                    id_AlunoTurma = id_AlunoTurma,
                     email = email)
+
+@app.route('/turma_especifica/<NUMAUT>/<id_Turma>', methods=['GET'])
+#@token_required 
+def turma_especifica(NUMAUT, id_Turma):
+    json_exames = []
+    con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', 
+                    user='sysdba', password='abdsys')
+    cur = con.cursor()
+
+    id_AlunoTurma = Query(cur, dado="NOTA", tabela="ALUNOTURMA", quando="NUMALUNO='"+str(NUMAUT)+"' AND NUMTURMA='"+str(id_Turma)+"'")
+    if id_AlunoTurma == None: return jsonify(status=False)
+    nota = Query(cur, dado="NOTA", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    freq = Query(cur, dado="FREQ", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    resultado = Query(cur, dado="RESULTADO", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    numfaltas = Query(cur, dado="NUMFALTAS", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota01 = Query(cur, dado="NOTA01", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota02 = Query(cur, dado="NOTA02", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota03 = Query(cur, dado="NOTA03", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota04 = Query(cur, dado="NOTA04", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota05 = Query(cur, dado="NOTA05", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota06 = Query(cur, dado="NOTA06", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota07 = Query(cur, dado="NOTA07", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota08 = Query(cur, dado="NOTA08", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota09 = Query(cur, dado="NOTA09", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    nota10 = Query(cur, dado="NOTA10", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+    desistentes = Query(cur, dado="DESISTENTE", tabela="ALUNOTURMA", quando="NUMAUT='"+str(id_AlunoTurma)+"'")
+
+    con.close()
+    return jsonify( status = True,
+                    freq = freq,
+                    resultado = resultado,
+                    numfaltas = numfaltas,
+                    nota = nota,
+                    nota01 = nota01,
+                    nota02 = nota02,
+                    nota03 = nota03,
+                    nota04 = nota04,
+                    nota05 = nota05,
+                    nota06 = nota06,
+                    nota07 = nota07,
+                    nota08 = nota08,
+                    nota09 = nota09,
+                    nota10 = nota10,
+                    desistentes = desistentes)
 
 @app.route('/exames_proficiencia', methods=['GET'])
 @token_required 
@@ -106,7 +152,7 @@ def login():
 @app.route('/')
 #@token_required 
 def index_():
-    return "Koe man, a API está no ar meu bacana !!!"
+    return "Seja Bem vindo a rota de teste da API do Cenex !!!"
 
 if __name__ == '__main__':
     app.run(debug=False)
