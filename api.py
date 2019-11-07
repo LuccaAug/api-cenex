@@ -11,6 +11,7 @@ app.config['SECRET_KEY'] = "O Lucca é corno"
 def Query(cur, dado, tabela, quando):
     cur.execute("SELECT "+dado+" FROM "+tabela+" WHERE "+quando)
     for a in cur:
+        print(a)
         return a[0]
 
 def token_required(f):
@@ -61,8 +62,23 @@ def dadosAlunos(NUMAUT):
                     cep = cep,
                     celular = celular,
                     #senha = senha,
-                    id_AlunoTurma = id_AlunoTurma,
+                    #id_AlunoTurma = id_AlunoTurma,
                     email = email)
+
+@app.route('/turmas/<NUMAUT>/', methods=['GET'])
+#@token_required 
+def turmas(NUMAUT):
+    json_exames = []
+    con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', 
+                    user='sysdba', password='abdsys')
+    cur = con.cursor()
+
+    turmas = Query(cur, dado="NUMTURMA", tabela="ALUNOTURMA", quando="NUMALUNO='"+str(NUMAUT)+"'")
+    
+    con.close()
+    return jsonify( status = True,
+                    turmas = turmas,
+                    )
 
 @app.route('/turma_especifica/<NUMAUT>/<id_Turma>', methods=['GET'])
 #@token_required 
