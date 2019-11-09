@@ -165,6 +165,27 @@ def login():
     con.close()
     return jsonify(token = "Senha incorreta")
 
+def _Query(query):
+    con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', user='sysdba', password='abdsys')
+    cur = con.cursor()
+    cur.execute("query")    
+    result = cur.fetchAll()
+    con.close()
+    return result
+
+
+
+@app.route('/semestres_anteriores/<NUMAUT>')
+#@token_required
+def semestres_anteriores(NUMAUT):
+    result = _Query( "SELECT c.CURSO, e.ESTAGIO, t.NUMAUT, t.ANO, t.SEM \
+                        FROM ALUNOTURMA alt \
+                        INNER JOIN TURMA t ON alt.NUMTURMA = t.NUMAUT \
+                        INNER JOIN CURSO c ON t.NUMCURSO = c.NUMAUT \
+                        INNER JOIN ESTAGIO e ON t.NUMESTAGIO = e.NUMAUT \
+                        WHERE alt.NUMALUNO =" + str(NUMAUT))
+    return jsonify(result)
+
 @app.route('/')
 #@token_required 
 def index_():
