@@ -175,7 +175,7 @@ def _Query(query):
 
 
 
-@app.route('/semestres_anteriores/<NUMAUT>')
+@app.route('/semestres_anteriores/<int:NUMAUT>', methods=['GET'])
 #@token_required
 def semestres_anteriores(NUMAUT):
     result = _Query( "SELECT c.CURSO, e.ESTAGIO, t.NUMAUT, t.ANO, t.SEM \
@@ -186,8 +186,20 @@ def semestres_anteriores(NUMAUT):
                         WHERE alt.NUMALUNO =" + str(NUMAUT))
     return jsonify(result)
 
+@app.route('/exames_proficiencia/<int:NUMAUT>', methods=['GET'])
+#@token_required
+def exames_proficiencia(NUMAUT):
+    result = _Query( "SELECT ep.*, ep.numaut AS var_numautexprof, ep.msgalt,aep.numaut AS var_numautalunoexprof, \
+                        aep.nota AS var_nota,sep.solic AS var_solic, aep.numidioma AS var_numidiomaaluno, idioma.idioma AS var_idioma \
+                        FROM solicexprof sep,exprof ep,alunoexprof aep,idioma \
+                        WHERE sep.numaut=ep.numsolicexprof \
+                        AND aep.numexprof=ep.numaut \
+                        AND aep.numidioma=idioma.numaut \
+                        AND aep.numaluno= " + str(NUMAUT))
+    return jsonify(result)
+
 @app.route('/')
-#@token_required 
+#@token_required
 def index_():
     return "Seja Bem vindo a rota de teste da API do Cenex !!!"
 
