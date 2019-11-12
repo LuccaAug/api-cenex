@@ -31,8 +31,11 @@ def token_required(f):
         return f(int(current_user_id), *args, **kwargs)
     return decorated 
 
+###########################################################################################
+##################                   Dados Pessoais                      ##################
+###########################################################################################
 @app.route('/dados_pessoais/<int:NUMAUT>', methods=['GET'])
-#@token_required 
+@token_required 
 def dadosAlunos(NUMAUT):
     con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', 
                     user='sysdba', password='abdsys')
@@ -65,6 +68,9 @@ def dadosAlunos(NUMAUT):
                     #id_AlunoTurma = id_AlunoTurma,
                     email = email)
 
+###########################################################################################
+##################                      Turmas                           ##################
+###########################################################################################
 @app.route('/turmas', methods=['GET'])
 @token_required 
 def turmas(NUMAUT):
@@ -80,6 +86,9 @@ def turmas(NUMAUT):
                     turmas = turmas,
                     )
 
+###########################################################################################
+##################                   Turma Específica                    ##################
+###########################################################################################
 @app.route('/turma_especifica/<id_Turma>', methods=['GET'])
 @token_required 
 def turma_especifica(NUMAUT, id_Turma):
@@ -123,22 +132,10 @@ def turma_especifica(NUMAUT, id_Turma):
                     nota09 = nota09,
                     nota10 = nota10,
                     desistentes = desistentes)
-
-@app.route('/exames_proficiencia', methods=['GET'])
-@token_required 
-def exameProficiencia(NUMAUT):
-    json_exames = []
-    con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', 
-                    user='sysdba', password='abdsys')
-    cur = con.cursor()
-
-    for j in range(0):
-        j = Query(cur, dado="", tabela="", quando="NUMAUT='"+NUMAUT+"'")
-        json_exames.append(j)
-
-    con.close()
-    return jsonify({"Exames de Proficiência" : json_exames})
-
+                    
+###########################################################################################
+##################                   Mensagens                           ##################
+###########################################################################################
 @app.route('/mensagens/', methods=['GET'])
 @token_required 
 def mensagens(NUMAUT):
@@ -148,6 +145,9 @@ def mensagens(NUMAUT):
         mens.append(x)
     return jsonify(mens)
 
+###########################################################################################
+##################                      Login                            ##################
+###########################################################################################
 @app.route('/login', methods=['POST'])
 def login():
     json_data = request.get_json(force=True)
@@ -182,8 +182,9 @@ def _Query(query):
     con.close()
     return result
 
-
-
+###########################################################################################
+##################               Semestres Anteriores                    ##################
+###########################################################################################
 @app.route('/semestres_anteriores/<int:NUMAUT>', methods=['GET'])
 #@token_required
 def semestres_anteriores(NUMAUT):
@@ -195,6 +196,9 @@ def semestres_anteriores(NUMAUT):
                         WHERE alt.NUMALUNO =" + str(NUMAUT))
     return jsonify(result)
 
+###########################################################################################
+##################               Exames de Proficiência                  ##################
+###########################################################################################
 @app.route('/exames_proficiencia/<int:NUMAUT>', methods=['GET'])
 #@token_required
 def exames_proficiencia(NUMAUT):
@@ -207,6 +211,9 @@ def exames_proficiencia(NUMAUT):
                         AND aep.numaluno= " + str(NUMAUT))
     return jsonify(result)
 
+###########################################################################################
+##################                      Index                            ##################
+###########################################################################################
 @app.route('/')
 #@token_required
 def index_():
