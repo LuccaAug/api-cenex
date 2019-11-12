@@ -65,8 +65,8 @@ def dadosAlunos(NUMAUT):
                     #id_AlunoTurma = id_AlunoTurma,
                     email = email)
 
-@app.route('/turmas/<NUMAUT>/', methods=['GET'])
-#@token_required 
+@app.route('/turmas', methods=['GET'])
+@token_required 
 def turmas(NUMAUT):
     json_exames = []
     con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', 
@@ -80,8 +80,8 @@ def turmas(NUMAUT):
                     turmas = turmas,
                     )
 
-@app.route('/turma_especifica/<NUMAUT>/<id_Turma>', methods=['GET'])
-#@token_required 
+@app.route('/turma_especifica/<id_Turma>', methods=['GET'])
+@token_required 
 def turma_especifica(NUMAUT, id_Turma):
     json_exames = []
     con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', 
@@ -138,6 +138,15 @@ def exameProficiencia(NUMAUT):
 
     con.close()
     return jsonify({"Exames de Proficiência" : json_exames})
+
+@app.route('/mensagens/', methods=['GET'])
+@token_required 
+def mensagens(NUMAUT):
+    mens = []
+    for msg in mensagens:
+        x = jsonify(titulo=titulo, mensagem=mensagem, remetente=remetente)
+        mens.append(x)
+    return jsonify(mens)
 
 @app.route('/login', methods=['POST'])
 def login():
