@@ -136,7 +136,7 @@ def turma_especifica(NUMAUT, id_Turma):
 ###########################################################################################
 ##################                   Mensagens                           ##################
 ###########################################################################################
-@app.route('/mensagens/', methods=['GET'])
+@app.route('/mensagens/<int:NUMAUT>', methods=['GET'])
 @token_required 
 def mensagens(NUMAUT):
     mens = []
@@ -177,7 +177,7 @@ def login():
 def _Query(query):
     con = fdb.connect(dsn='150.164.100.122:/var/www/dados/scntestes.gdb', user='sysdba', password='abdsys')
     cur = con.cursor()
-    cur.execute("query")    
+    cur.execute(query)    
     result = cur.fetchAll()
     con.close()
     return result
